@@ -717,7 +717,7 @@ Template Name: Homepage
             <a href="#"><i class="fab fa-instagram"></i></a>
             <a href="https://wa.me/447727307150"><i class="fab fa-whatsapp"></i></a>
         </div>
-        <p>&copy; 2025 Osman Wahidi Construction Services. All rights reserved. Testing Auto Deployment</p>
+        <p>&copy; 2025 Osman Wahidi Construction Services. All rights reserved.</p>
     </footer>
 
     <!-- WhatsApp Floating Button -->
