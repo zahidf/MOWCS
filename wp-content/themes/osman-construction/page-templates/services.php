@@ -796,7 +796,6 @@ Template Name: Services
                             </ul>
                         </div>
                         <div class="service-cta">
-                            <span class="service-price">10 Year Guarantee</span>
                             <a href="<?php echo home_url(); ?>#contact" class="btn-service">Get Quote</a>
                         </div>
                     </div>
@@ -944,7 +943,7 @@ Template Name: Services
                 <div class="benefit-item">
                     <i class="fas fa-thumbs-up"></i>
                     <h3>Quality Guarantee</h3>
-                    <p>All work guaranteed with aftercare support</p>
+                    <p>Reputation of exceeding expectations consistently</p>
                 </div>
             </div>
         </div>

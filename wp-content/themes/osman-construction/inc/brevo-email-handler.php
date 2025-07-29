@@ -74,24 +74,8 @@ function process_contact_form_submission() {
         'Reply-To: ' . $firstName . ' ' . $lastName . ' <' . $email . '>'
     );
 
-    // Log email attempt
-    if (WP_DEBUG_LOG) {
-        error_log('Attempting to send admin email to: ' . $to);
-        error_log('From email: ' . $from_email);
-        error_log('Reply-To: ' . $email);
-    }
-
     // Send email using wp_mail (which Brevo plugin should intercept)
     $email_sent = wp_mail($to, $subject, $email_body, $headers);
-    
-    // Log result
-    if (WP_DEBUG_LOG) {
-        if ($email_sent) {
-            error_log('Admin email sent successfully to: ' . $to);
-        } else {
-            error_log('Failed to send admin email to: ' . $to);
-        }
-    }
 
     // Send confirmation email to the user
     if ($email_sent) {
@@ -129,20 +113,10 @@ function process_contact_form_submission() {
     }
 
     if ($email_sent) {
-        // Log successful submission
-        if (WP_DEBUG_LOG) {
-            error_log('Contact form submitted successfully from: ' . $email);
-        }
-        
         wp_send_json_success(array(
             'message' => 'Thank you for your message! Osman will contact you soon.'
         ));
     } else {
-        // Log error
-        if (WP_DEBUG_LOG) {
-            error_log('Failed to send contact form email from: ' . $email);
-        }
-        
         wp_send_json_error('Sorry, there was an error sending your message. Please try again or contact us directly.');
     }
 }
