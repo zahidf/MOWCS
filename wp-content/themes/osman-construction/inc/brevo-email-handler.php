@@ -32,8 +32,13 @@ function process_contact_form_submission() {
     }
 
     // Prepare email content
-    $to = get_option('admin_email', 'osman.wahidi88@gmail.com');
+    $to = 'osman.wahidi88@gmail.com'; // Force admin email
     $subject = 'New Contact Form Submission - ' . $firstName . ' ' . $lastName;
+    
+    // Get site domain for proper From address
+    $site_url = parse_url(get_site_url());
+    $domain = $site_url['host'];
+    $from_email = 'noreply@' . $domain;
     
     // Create HTML email body
     $email_body = '<html><body style="font-family: Arial, sans-serif; line-height: 1.6; color: #333;">';
@@ -54,17 +59,39 @@ function process_contact_form_submission() {
     $email_body .= '<tr><td style="padding: 10px; vertical-align: top;"><strong>Message:</strong></td><td style="padding: 10px;">' . nl2br(esc_html($message)) . '</td></tr>';
     $email_body .= '</table>';
     $email_body .= '<p style="margin-top: 30px; padding: 15px; background-color: #f0f0f0; border-left: 4px solid #ff8c00;">This message was sent from the contact form on your website.</p>';
+    $email_body .= '<p style="margin-top: 20px;"><strong>Customer Contact Info:</strong><br>';
+    $email_body .= 'Email: <a href="mailto:' . esc_attr($email) . '">' . esc_html($email) . '</a><br>';
+    if (!empty($phone)) {
+        $email_body .= 'Phone: <a href="tel:' . esc_attr($phone) . '">' . esc_html($phone) . '</a>';
+    }
+    $email_body .= '</p>';
     $email_body .= '</div></body></html>';
 
-    // Set headers for HTML email
+    // Set headers for HTML email - Use domain email as From to avoid spam filters
     $headers = array(
         'Content-Type: text/html; charset=UTF-8',
-        'From: ' . $firstName . ' ' . $lastName . ' <' . $email . '>',
-        'Reply-To: ' . $email
+        'From: Osman Wahidi Construction <' . $from_email . '>',
+        'Reply-To: ' . $firstName . ' ' . $lastName . ' <' . $email . '>'
     );
+
+    // Log email attempt
+    if (WP_DEBUG_LOG) {
+        error_log('Attempting to send admin email to: ' . $to);
+        error_log('From email: ' . $from_email);
+        error_log('Reply-To: ' . $email);
+    }
 
     // Send email using wp_mail (which Brevo plugin should intercept)
     $email_sent = wp_mail($to, $subject, $email_body, $headers);
+    
+    // Log result
+    if (WP_DEBUG_LOG) {
+        if ($email_sent) {
+            error_log('Admin email sent successfully to: ' . $to);
+        } else {
+            error_log('Failed to send admin email to: ' . $to);
+        }
+    }
 
     // Send confirmation email to the user
     if ($email_sent) {
@@ -94,8 +121,8 @@ function process_contact_form_submission() {
         
         $user_headers = array(
             'Content-Type: text/html; charset=UTF-8',
-            'From: Osman Wahidi Construction <' . $to . '>',
-            'Reply-To: ' . $to
+            'From: Osman Wahidi Construction <' . $from_email . '>',
+            'Reply-To: osman.wahidi88@gmail.com'
         );
         
         wp_mail($email, $user_subject, $user_body, $user_headers);
