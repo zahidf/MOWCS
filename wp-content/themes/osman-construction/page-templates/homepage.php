@@ -681,9 +681,16 @@ Template Name: Homepage
                 <div class="contact-form">
                     <h3 style="color: var(--primary-orange); margin-bottom: 1.5rem;">Request a Free Quote</h3>
                     <form id="contact-form">
+                        <div class="form-success-message" id="homeSuccessMessage" style="display: none; background-color: #4CAF50; color: white; padding: 1rem; border-radius: 5px; margin-bottom: 1rem;">
+                            Thank you for your message! Osman will contact you soon.
+                        </div>
                         <div class="form-group">
-                            <label for="name">Your Name</label>
-                            <input type="text" id="name" name="name" required placeholder="John Doe">
+                            <label for="firstName">First Name</label>
+                            <input type="text" id="firstName" name="firstName" required placeholder="John">
+                        </div>
+                        <div class="form-group">
+                            <label for="lastName">Last Name</label>
+                            <input type="text" id="lastName" name="lastName" required placeholder="Doe">
                         </div>
                         <div class="form-group">
                             <label for="email">Email Address</label>
@@ -691,7 +698,7 @@ Template Name: Homepage
                         </div>
                         <div class="form-group">
                             <label for="phone">Phone Number</label>
-                            <input type="tel" id="phone" name="phone" placeholder="(44) 123-456-7890">
+                            <input type="tel" id="phone" name="phone" placeholder="+44 7727 307150">
                         </div>
                         <div class="form-group">
                             <label for="service">Service Required</label>
@@ -752,11 +759,57 @@ Template Name: Homepage
 
         // Contact form submission
         const contactForm = document.getElementById('contact-form');
-        contactForm.addEventListener('submit', (e) => {
+        const homeSuccessMessage = document.getElementById('homeSuccessMessage');
+        const submitBtn = contactForm.querySelector('button[type="submit"]');
+        
+        contactForm.addEventListener('submit', async (e) => {
             e.preventDefault();
-            // Here you would integrate with Brevo or your email service
-            alert('Thank you for your message! Osman will contact you soon.');
-            contactForm.reset();
+            
+            // Disable submit button and show loading state
+            submitBtn.disabled = true;
+            const originalText = submitBtn.textContent;
+            submitBtn.textContent = 'Sending...';
+            
+            // Get form data
+            const formData = new FormData(contactForm);
+            
+            // Add action and nonce
+            formData.append('action', 'submit_contact_form');
+            formData.append('contact_nonce', typeof osman_ajax !== 'undefined' ? osman_ajax.nonce : '');
+            
+            try {
+                // Send AJAX request
+                const response = await fetch(typeof osman_ajax !== 'undefined' ? osman_ajax.ajax_url : '/wp-admin/admin-ajax.php', {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    // Show success message
+                    homeSuccessMessage.textContent = result.data.message || 'Thank you for your message! Osman will contact you soon.';
+                    homeSuccessMessage.style.display = 'block';
+                    
+                    // Reset form
+                    contactForm.reset();
+                    
+                    // Hide success message after 5 seconds
+                    setTimeout(() => {
+                        homeSuccessMessage.style.display = 'none';
+                    }, 5000);
+                } else {
+                    // Show error message
+                    alert(result.data || 'Sorry, there was an error sending your message. Please try again.');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Sorry, there was an error sending your message. Please try again or contact us directly.');
+            } finally {
+                // Re-enable submit button
+                submitBtn.disabled = false;
+                submitBtn.textContent = originalText;
+            }
         });
 
         // Add scroll effect to navbar

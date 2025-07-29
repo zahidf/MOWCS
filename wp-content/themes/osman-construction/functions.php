@@ -23,4 +23,16 @@ add_action('wp_enqueue_scripts', 'osman_enqueue_assets');
 if (!defined('DONOTCACHEPAGE')) {
     define('DONOTCACHEPAGE', true);
 }
+
+// Include Brevo email handler
+require_once get_template_directory() . '/inc/brevo-email-handler.php';
+
+// Localize script for AJAX
+function osman_localize_scripts() {
+    wp_localize_script('main-script', 'osman_ajax', array(
+        'ajax_url' => admin_url('admin-ajax.php'),
+        'nonce' => wp_create_nonce('contact_form_nonce')
+    ));
+}
+add_action('wp_enqueue_scripts', 'osman_localize_scripts');
 ?>

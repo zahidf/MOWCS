@@ -775,30 +775,59 @@ Template Name: Contact
         // Contact form submission
         const contactForm = document.getElementById('contactForm');
         const successMessage = document.getElementById('successMessage');
+        const submitButton = contactForm.querySelector('.btn-submit');
 
-        contactForm.addEventListener('submit', (e) => {
+        contactForm.addEventListener('submit', async (e) => {
             e.preventDefault();
+            
+            // Disable submit button and show loading state
+            submitButton.disabled = true;
+            const originalText = submitButton.innerHTML;
+            submitButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Sending...';
             
             // Get form data
             const formData = new FormData(contactForm);
-            const data = Object.fromEntries(formData);
             
-            // Here you would integrate with your email service (Brevo)
-            console.log('Form data:', data);
+            // Add nonce for security
+            formData.append('action', 'submit_contact_form');
+            formData.append('contact_nonce', typeof osman_ajax !== 'undefined' ? osman_ajax.nonce : '');
             
-            // Show success message
-            successMessage.classList.add('show');
-            
-            // Reset form
-            contactForm.reset();
-            
-            // Hide success message after 5 seconds
-            setTimeout(() => {
-                successMessage.classList.remove('show');
-            }, 5000);
-            
-            // Scroll to top of form
-            contactForm.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            try {
+                // Send AJAX request
+                const response = await fetch(typeof osman_ajax !== 'undefined' ? osman_ajax.ajax_url : '/wp-admin/admin-ajax.php', {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    // Show success message
+                    successMessage.textContent = result.data.message || 'Thank you for your message! Osman will contact you soon.';
+                    successMessage.classList.add('show');
+                    
+                    // Reset form
+                    contactForm.reset();
+                    
+                    // Hide success message after 5 seconds
+                    setTimeout(() => {
+                        successMessage.classList.remove('show');
+                    }, 5000);
+                    
+                    // Scroll to top of form
+                    contactForm.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                } else {
+                    // Show error message
+                    alert(result.data || 'Sorry, there was an error sending your message. Please try again.');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Sorry, there was an error sending your message. Please try again or contact us directly.');
+            } finally {
+                // Re-enable submit button
+                submitButton.disabled = false;
+                submitButton.innerHTML = originalText;
+            }
         });
 
         // Phone number formatting
