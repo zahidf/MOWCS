@@ -620,8 +620,8 @@ Template Name: Homepage
                     <img src="<?php echo get_template_directory_uri(); ?>/images/pic1.jpg" alt="Preview Pic 1">
                     <div class="portfolio-overlay">
                         <div class="portfolio-info">
-                            <h3>Modern Loft Conversion</h3>
-                            <p>Complete transformation with skylights</p>
+                            <h3>Block Paving Driveway</h3>
+                            <p>Professional block paving with elegant pattern design</p>
                         </div>
                     </div>
                 </div>
@@ -629,8 +629,8 @@ Template Name: Homepage
                     <img src="<?php echo get_template_directory_uri(); ?>/images/pic2.jpg" alt="Preview Pic 2">
                     <div class="portfolio-overlay">
                         <div class="portfolio-info">
-                            <h3>Kitchen Extension</h3>
-                            <p>Open-plan kitchen and dining area</p>
+                            <h3>Decorative Block Paving</h3>
+                            <p>Durable driveway with premium finish</p>
                         </div>
                     </div>
                 </div>
@@ -638,8 +638,8 @@ Template Name: Homepage
                     <img src="<?php echo get_template_directory_uri(); ?>/images/pic3.jpg" alt="Preview Pic 3">
                     <div class="portfolio-overlay">
                         <div class="portfolio-info">
-                            <h3>Block Paving Driveway</h3>
-                            <p>Durable and elegant entrance</p>
+                            <h3>Roof Frame Construction</h3>
+                            <p>Structural roof frame installation and reinforcement</p>
                         </div>
                     </div>
                 </div>
